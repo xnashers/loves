@@ -6,26 +6,28 @@
     <title>Rush ID</title>
     <style>
         body {
-         
+            display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
             background-color: #f0f0f0;
+            position: relative;
         }
         .container {
-            width: 100vw;
-            height: calc(100vw * 1.5); /* 4R aspect ratio is 4:6, i.e., 1:1.5 */
-            max-height: 100vh;
-            max-width: calc(100vh / 1.5);
+            width: 100vh;
+            height: calc(100vh / 1.5); /* 4R aspect ratio in landscape is 6:4, i.e., 1.5:1 */
+            max-width: 100vw;
+            max-height: calc(100vw * 1.5);
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            grid-template-rows: repeat(6, 1fr);
+            grid-template-columns: repeat(6, 1fr);
+            grid-template-rows: repeat(4, 1fr);
             gap: 2px;
             border: 1px solid #000;
             background-color: #fff;
             overflow: hidden;
             position: relative;
+            z-index: 1;
         }
         .square {
             border: 1px solid #000000;
@@ -42,7 +44,6 @@
             top: 0;
             left: 0;
             width: 100%;
-         
             height: 100%;
             object-fit: cover;
         }
@@ -54,18 +55,29 @@
             display: none;
         }
         .upload-btn {
-            position: absolute;
-            top: 20px;
-            left: 20px;
             padding: 10px 20px;
             background-color: #007bff;
             color: white;
             border: none;
             cursor: pointer;
             transition: opacity 0.3s ease;
+            z-index: 3;
+            position: relative;
         }
         .upload-btn:hover {
             opacity: 0.8;
+        }
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2;
         }
     </style>
 </head>
@@ -80,12 +92,15 @@
         <div class="square" id="square7"></div>
         <div class="square" id="square8"></div>
         <div class="square" id="square9"></div>
-        <div class="square" id="square10"></div>
-        <div class="square" id="square11"></div>
-        <div class="square" id="square12"></div>
+
     </div>
+
+    <!-- Dark overlay with centered button -->
+    <div class="overlay">
+        <button class="upload-btn" onclick="document.getElementById('file').click()">Upload</button>
+    </div>
+    
     <input type="file" accept="image/*" class="hidden" id="file" onchange="loadImage(event)">
-    <button class="upload-btn" onclick="document.getElementById('file').click()">Upload</button>
 
     <script>
         function loadImage(event) {
@@ -99,9 +114,9 @@
                     square.innerHTML = '';
                     square.appendChild(img);
                 });
-                var uploadBtn = document.querySelector('.upload-btn');
-                if (uploadBtn) {
-                    uploadBtn.style.display = 'none';
+                var overlay = document.querySelector('.overlay');
+                if (overlay) {
+                    overlay.style.display = 'none';
                 }
             }
             reader.readAsDataURL(event.target.files[0]);
